@@ -1,5 +1,9 @@
 # lightarray_arduino
 
+## Attributions
+
+The serial reading and parsing is from https://github.com/cloudpower/circuit (undergraduate project by myself and 3 others).
+
 ## License
 
 This program is free software: you can redistribute it and/or modify
