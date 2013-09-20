@@ -2,7 +2,7 @@
 const int IN_BUFF_LEN = 100;
 int oldValues [4] = {-1, -1, -1, -1};
 int values [4] = {0, 0, 0, 0};
-int outputs [4] = {3, 5, 6, 9};
+int outputs [4] = {3, 4, 5, 6};
 
 void serial_handler(char * line){
   String message = String(line);
@@ -48,6 +48,10 @@ void setup() {
   for (int i = 0; i < 4; i++){
     pinMode(outputs[i], OUTPUT);
   }
+  pinMode(13, OUTPUT);
+  digitalWrite(13, HIGH);
+  pinMode(12, OUTPUT);
+  digitalWrite(12, HIGH);
 }
 
 void loop() {
