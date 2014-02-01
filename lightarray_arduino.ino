@@ -1,8 +1,11 @@
+#include <AltSoftSerial.h>
 
 const int IN_BUFF_LEN = 100;
-int oldValues [4] = {-1, -1, -1, -1};
-int values [4] = {0, 0, 0, 0};
-int outputs [4] = {3, 4, 5, 6};
+int oldValues [5] = {-1, -1, -1, -1, -1};
+int values [5] = {0, 0, 0, 0, 0};
+int outputs [5] = {3, 4, 5, 6, 9};
+
+AltSoftSerial altSerial;
 
 void serial_handler(char * line){
   String message = String(line);
@@ -15,10 +18,17 @@ void serial_handler(char * line){
     values[1] = getValue(message, ',', 1).toInt();
     values[2] = getValue(message, ',', 2).toInt();
     values[3] = getValue(message, ',', 3).toInt();
+    values[4] = getValue(message, ',', 4).toInt();
     for (int i = 0; i < sizeof(values)/sizeof(values[0]); i++){
       if (values[i] != oldValues[i]){
-        // write the value
-        analogWrite(outputs[i], values[i]*2);
+        // if this is the last element in the array, write it to the wireless transmitter
+        if (i == 4) {
+          altSerial.print(values[i]*2);
+        }
+        else {
+          // write the value
+          analogWrite(outputs[i], values[i]*2);
+        }
         String out = String("Sending ") + values[i] + String(" to ") + outputs[i];
         Serial.println(out);
       }
@@ -45,7 +55,8 @@ String getValue(String data, char separator, int index)
 
 void setup() {
   Serial.begin(115200);
-  for (int i = 0; i < 4; i++){
+  altSerial.begin(4800);
+  for (int i = 0; i < 5; i++){
     pinMode(outputs[i], OUTPUT);
   }
   pinMode(13, OUTPUT);
@@ -61,8 +72,8 @@ void loop() {
   char c;
   
   for(;;) {       
-  // Add new characters to a buffer
-  if(Serial.available()) {
+    // Add new characters to a buffer
+    if(Serial.available()) {
       c = Serial.read();
       // If the buffer is full
       if(buff_index == IN_BUFF_LEN) {
@@ -81,11 +92,11 @@ void loop() {
           // Now that this overflowed line has ended, 
           // reset the overflow flag.
           overflow = 0;
-        } else if(buff_index-1 < IN_BUFF_LEN) {
+        } else if(buff_index - 1 < IN_BUFF_LEN) {
           // Replace the '\n' with null terminator
-	  in_buff[buff_index-1] = 0;
-	  // Parse this line as a command
-	  serial_handler(in_buff);
+      	  in_buff[buff_index - 1] = 0;
+      	  // Parse this line as a command
+      	  serial_handler(in_buff);
         }	
         buff_index = 0;
       }
