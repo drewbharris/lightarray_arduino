@@ -1,4 +1,4 @@
-#include <AltSoftSerial.h>
+#include <VirtualWire.h>
 
 const int IN_BUFF_LEN = 100;
 int oldValues [5] = {-1, -1, -1, -1, -1};
@@ -23,7 +23,7 @@ void serial_handler(char * line){
       if (values[i] != oldValues[i]){
         // if this is the last element in the array, write it to the wireless transmitter
         if (i == 4) {
-          altSerial.print(values[i]*2);
+          vw_send((uint8_t *)(values[i] * 2), 7);
         }
         else {
           // write the value
@@ -55,7 +55,7 @@ String getValue(String data, char separator, int index)
 
 void setup() {
   Serial.begin(115200);
-  altSerial.begin(4800);
+  vw_setup(4800);
   for (int i = 0; i < 5; i++){
     pinMode(outputs[i], OUTPUT);
   }
