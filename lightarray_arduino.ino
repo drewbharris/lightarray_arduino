@@ -1,8 +1,7 @@
-
 const int IN_BUFF_LEN = 100;
-int oldValues [4] = {-1, -1, -1, -1};
-int values [4] = {0, 0, 0, 0};
-int outputs [4] = {3, 5, 6, 9};
+int oldValues [5] = {-1, -1, -1, -1, -1};
+int values [5] = {0, 0, 0, 0, 0};
+int outputs [5] = {3, 4, 5, 6, 9};
 
 void serial_handler(char * line){
   String message = String(line);
@@ -15,6 +14,7 @@ void serial_handler(char * line){
     values[1] = getValue(message, ',', 1).toInt();
     values[2] = getValue(message, ',', 2).toInt();
     values[3] = getValue(message, ',', 3).toInt();
+    values[4] = getValue(message, ',', 4).toInt();
     for (int i = 0; i < sizeof(values)/sizeof(values[0]); i++){
       if (values[i] != oldValues[i]){
         // write the value
@@ -46,6 +46,10 @@ void setup() {
   for (int i = 0; i < 4; i++){
     pinMode(outputs[i], OUTPUT);
   }
+  pinMode(13, OUTPUT);
+  digitalWrite(13, HIGH);
+  pinMode(12, OUTPUT);
+  digitalWrite(12, HIGH);
 }
 
 void loop() {
@@ -55,8 +59,8 @@ void loop() {
   char c;
   
   for(;;) {       
-  // Add new characters to a buffer
-  if(Serial.available()) {
+    // Add new characters to a buffer
+    if(Serial.available()) {
       c = Serial.read();
       // If the buffer is full
       if(buff_index == IN_BUFF_LEN) {
@@ -75,11 +79,11 @@ void loop() {
           // Now that this overflowed line has ended, 
           // reset the overflow flag.
           overflow = 0;
-        } else if(buff_index-1 < IN_BUFF_LEN) {
+        } else if(buff_index - 1 < IN_BUFF_LEN) {
           // Replace the '\n' with null terminator
-	  in_buff[buff_index-1] = 0;
-	  // Parse this line as a command
-	  serial_handler(in_buff);
+      	  in_buff[buff_index - 1] = 0;
+      	  // Parse this line as a command
+      	  serial_handler(in_buff);
         }	
         buff_index = 0;
       }
