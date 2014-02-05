@@ -19,8 +19,6 @@ void serial_handler(char * line){
       if (values[i] != oldValues[i]){
         // write the value
         analogWrite(outputs[i], values[i]*2);
-        String out = String("Sending ") + values[i] + String(" to ") + outputs[i];
-        Serial.println(out);
       }
      oldValues[i] = values[i]; 
     }
@@ -44,7 +42,7 @@ String getValue(String data, char separator, int index)
 }
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(4800);
   for (int i = 0; i < 4; i++){
     pinMode(outputs[i], OUTPUT);
   }
