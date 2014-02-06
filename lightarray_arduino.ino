@@ -1,7 +1,12 @@
+#include <VirtualWire.h>
+
 const int IN_BUFF_LEN = 100;
 int oldValues [5] = {-1, -1, -1, -1, -1};
 int values [5] = {0, 0, 0, 0, 0};
 int outputs [5] = {3, 4, 5, 6, 9};
+
+const int transmit_pin = 12;
+char rfValue[4];
 
 void serial_handler(char * line){
   String message = String(line);
@@ -18,13 +23,17 @@ void serial_handler(char * line){
     for (int i = 0; i < sizeof(values)/sizeof(values[0]); i++){
       if (values[i] != oldValues[i]){
         // write the value
-        analogWrite(outputs[i], values[i]*2);
+        if (i == 4) {
+           itoa(values[i]*2, rfValue, 10);
+           vw_send((uint8_t *)rfValue, strlen(rfValue));
+        } else {
+           analogWrite(outputs[i], values[i]*2); 
+        }
       }
      oldValues[i] = values[i]; 
     }
   }
 }
-
 
 String getValue(String data, char separator, int index)
 {
@@ -42,7 +51,7 @@ String getValue(String data, char separator, int index)
 }
 
 void setup() {
-  Serial.begin(4800);
+  Serial.begin(115200);
   for (int i = 0; i < 4; i++){
     pinMode(outputs[i], OUTPUT);
   }
@@ -50,6 +59,9 @@ void setup() {
   digitalWrite(13, HIGH);
   pinMode(12, OUTPUT);
   digitalWrite(12, HIGH);
+  
+  vw_set_tx_pin(transmit_pin);
+  vw_setup(4800);
 }
 
 void loop() {
