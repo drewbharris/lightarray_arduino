@@ -3,7 +3,7 @@
 const int IN_BUFF_LEN = 100;
 int oldValues [5] = {-1, -1, -1, -1, -1};
 int values [5] = {0, 0, 0, 0, 0};
-int outputs [5] = {3, 4, 5, 6, 9};
+int outputs [5] = {3, 11, 5, 6, 9};
 
 const int transmit_pin = 12;
 char rfValue[4];
